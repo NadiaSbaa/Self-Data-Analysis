@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>AUTO-ANALYSE</title>
+    
+</head>
+<body>
+    <div id="ImportFile">
+        <h1>File Importation</h1>
+        <label>Delimiter : </label>
+        <input type="text" id="delimiter"> 
+        <br><br>
+        <label>Select your file please</label>
+        <br><br>
+        <input type="file" id="fileInput"> 
+    </div>
+    <div id="FileProperties">
+        <h1>File Properties</h1>
+        <p id="nbrcolumns"></p>
+        <p id="nbrlignes"></p>
+        <p id="columns"></p>
+    </div>
+    <div id="ExplortColumns">
+        <h1>Exploration</h1>
+        <label>Check the first 5 lignes of your file</label>
+        <br>
+        <input type="button" value="explore" id="explore">
+        <br>
+        <table id="headcolumns">
+            <tbody>
+            </tbody>
+        </table>
+        <h3>Colum exploration</h3>
+        <label for="column3-select">Select a column </label>
+            <select id="column3-select">
+                <option value="">--Please choose a column--</option>
+            </select>
+        <input type="button" value="Explore column" id="exploreColumn">
+        <br>
+        <table id="eachcolumn">
+            <tbody>
+            </tbody>
+        </table>
+        <br><br>
+        <table id="properties">
+            <tbody>
+            </tbody>
+        </table>
+        <br>
+        <input type="button" value="Generate Bar Graph" id="BarPerColumn">
+        <br>
+        <div class="chart-container" style="position: relative; height:40vh; width:40vw">
+            <canvas id="graph3"></canvas>
+        </div>
+    </div>
+    <br>
+        <input type="button" value="Generate Scatter Matrix" id="ScatterMatrix">
+        <br>
+    <div id="myDiv"></div>
+    <div id="GraphLine">
+        <div> 
+            <h1>Line</h1>
+            <p>A line chart is a way of plotting data points on a line</p>
+            <div>
+                <br>
+            <label for="column1-select">Choose first feature (on xAxis) </label>
+                <select id="column1-select">
+                </select>
+            <label for="column2-select">Choose second feature (on yAxis)</label>
+                <select  id="column2-select">
+                </select>
+            </div>
+            <h3>Select Graph Properties</h3>
+            <label for="BackgroundColorLine">Select Background Color  &nbsp; </label>
+            <input type="color" id="BackgroundColorLine"> <br>
+            <label for="BorderColorLine">Select Border Color &nbsp;</label>
+            <input type="color" id="BorderColorLine" ><br>
+            <label for="BorderWidthLine">Select Border width &nbsp;</label>
+            <input type="number" id="BorderWidthLine" >
+            <br><br>
+            <input type="button" value="Genrate a line graph" id="line">
+        </div>
+        <div class="chart-container" style="position: relative; height:40vh; width:40vw">
+            <canvas id="graph1"></canvas>
+        </div>
+        <div id="GraphLBar">
+            <div> 
+                <h1>Bar</h1>
+                <p>A bar chart provides a way of showing data values represented as vertical bars.</p>
+                <div>
+                    <br>
+                <label for="column1-selectBar">Choose first feature (on xAxis) </label>
+                    <select id="column1-selectBar">
+                    </select>
+                <label for="column2-selectBar">Choose second feature  (on yAxis) </label>
+                    <select  id="column2-selectBar">
+                    </select>
+                </div>
+                <h3>Select Graph Properties</h3>
+                <label for="BackgroundColorBar">Select Background Color  &nbsp; </label>
+                <input type="color" id="BackgroundColorBar"> <br>
+                <label for="BorderColorBar">Select Border Color &nbsp;</label>
+                <input type="color" id="BorderColorBar" ><br>
+                <label for="BorderWidthBar">Select Border width &nbsp;</label>
+                <input type="number" id="BorderWidthBar" >
+                <br><br>
+                <input type="button" value="Genrate a Bar graph" id="Bar">
+            </div>
+            <div class="chart-container" style="position: relative; height:40vh; width:50vw">
+                <canvas id="graph2"></canvas>
+            </div>
+    <script src="convert.js"></script>
+</body>
+</html>
