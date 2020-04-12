@@ -22,6 +22,7 @@ reader.onload = function fileReadCompleted() {
  }
  //Show the rest of the page
  document.getElementById("diva").hidden = false;
+ document.getElementById("corImage").hidden = true;
  //Genrate the properties of the file
  generateFileProperties();
  //Add the name of the columns to all the selects in the page
@@ -37,6 +38,7 @@ var ar = reader.readAsText(this.files[0]);
 //Calcul all person correlation and choose the best one 
 function corrcoeffBest(){
     // cor have all the correlations between numerical features
+    insererTabHtml('pearsonCorrelatios',0,'Column 1','Column 2','Pearson Correlation');
     var cor = [];
     var f = [] ;
     var max = 0 ;
@@ -50,9 +52,12 @@ function corrcoeffBest(){
     f = cleanVersion2(f);
     console.log("Pearson correlation ..");
     for(var i=0; i < f.length ; i++){
+        
         for(var j=0; j < f.length ; j++){
             if ( i != j){
+  
                 var c = corrcoeff(convertToFloat(f[i]),convertToFloat(f[j])) ;
+                insererTabHtml('pearsonCorrelatios',i+1,Names[i],Names[j],c);
                 if (c > max){
                     max = c ;
                     var1 = Names[i];
@@ -62,11 +67,31 @@ function corrcoeffBest(){
             }
         }
     }
-    console.log("Final MAx Pearson correlation :" + max);
-    console.log("Between "+ var1 + " And "+ var2);
-    console.log(features.length);
+    var ch = "Maximum Pearson correlation is " +" between "+ var1 + " And "+ var2 + ":" + max ;
+    console.log(ch);
+    document.getElementById("maxPearsonCorr").innerHTML =  ch ;
+ 
+    document.getElementById("labelHelp").innerHTML = "Guidelines to interpreting Pearson's correlation coefficient";
+    
 }
 
+document.getElementById('help').addEventListener('click', function helpFunction() {
+    document.getElementById("corImage").hidden = false;
+    document.getElementById("help").hidden = true;
+    document.getElementById("corImage").src = "MeaningPearson.png";
+});
+
+function insererTabHtml(s , i, contenu1, contenu2 , contenu3){
+    var tableRef = document.getElementById(s).getElementsByTagName('tbody')[0];
+    var newRow   = tableRef.insertRow(i);
+    var cel1 = newRow.insertCell(0);
+    cel1.innerHTML = contenu1  ;
+    var cel1 = newRow.insertCell(1);
+    cel1.innerHTML = contenu2 ;
+    var cel1 = newRow.insertCell(2);
+    cel1.innerHTML = contenu3 ;
+
+}
 //from string to float
 function convertToFloat(elmt){
     var temp = [];
