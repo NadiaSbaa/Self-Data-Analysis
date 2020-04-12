@@ -1,10 +1,12 @@
 console.log("Starting..");
+document.getElementById("diva").hidden = true;
 
 //features is the features of our CSV file
 const features =[];
-var empty = 0;
+var emptyTab = 0;
+const Names = [];
 
-document.getElementById('fileInput').addEventListener('change', function selectedFileChanged() {
+document.getElementById('fileInput').addEventListener('change', function() {
 if (this.files.length === 0) {
  console.log('No file selected.');
  return;
@@ -18,17 +20,63 @@ reader.onload = function fileReadCompleted() {
  for(var i=0; i < arr[0].length ; i=i+1){
     features[i]= arr.map(x=>x[i]);
  }
+ //Show the rest of the page
+ document.getElementById("diva").hidden = false;
+ //Genrate the properties of the file
  generateFileProperties();
- addFeatures();
+ //Add the name of the columns to all the selects in the page
+ addFeatures(); 
+ //Drow the MIN AVG MAX bar graph
+ drowMinAVGMax();
+ corrcoeffBest();
 
- 
- 
 };
 var ar = reader.readAsText(this.files[0]);
 });
 
+//Calcul all person correlation and choose the best one 
+function corrcoeffBest(){
+    // cor have all the correlations between numerical features
+    var cor = [];
+    var f = [] ;
+    var max = 0 ;
+    var var1 = '' ;
+    var var2 = '';
+    for(var i=0; i < features.length ; i++){
+        if (Names.indexOf(features[i][0]) != -1){
+            f.push(features[i]);
+        }
+    }
+    f = cleanVersion2(f);
+    console.log("Pearson correlation ..");
+    for(var i=0; i < f.length ; i++){
+        for(var j=0; j < f.length ; j++){
+            if ( i != j){
+                var c = corrcoeff(convertToFloat(f[i]),convertToFloat(f[j])) ;
+                if (c > max){
+                    max = c ;
+                    var1 = Names[i];
+                    var2 = Names[j];
+                }
+                cor.push(c);
+            }
+        }
+    }
+    console.log("Final MAx Pearson correlation :" + max);
+    console.log("Between "+ var1 + " And "+ var2);
+    console.log(features[i]);
+}
 
-//range
+//from string to float
+function convertToFloat(elmt){
+    var temp = [];
+    for(var i=0 ; i <elmt.length ; i++){
+        temp.push(Number.parseFloat(elmt[i]))
+    }
+    return temp ;
+}
+
+//range of an array
 function range(elmt){
     var min = Math.min.apply(null, elmt);
     var max = Math.max.apply(null, elmt);
@@ -38,21 +86,26 @@ function range(elmt){
 //Generate explore
 document.getElementById('exploreColumn').addEventListener('click', function exploreEachColumn() {
     var f1 =  document.getElementById("column3-select").value;
+    //Show the details of a column
     details(matchNameFeatureToArrayFeature(f1));
    });
 
-//Generate explore column
+//Generate explore the dataset
 document.getElementById('explore').addEventListener('click', function exploreColumns() {
     var tableRef = document.getElementById('headcolumns').getElementsByTagName('tbody')[0];
-    if (empty == 0){
+    if (emptyTab == 0){
+    //There are no shown lines in the table
+    //Show 5 lines of the data set
     for (var i=0 ; i < 6 ; i=i+1){
     var newRow   = tableRef.insertRow();
     for(var j=0 ; j < features.length; j++){
         var cel1 = newRow.insertCell(j);
         cel1.innerHTML = features[j][i] ;
     }}
-    empty = 1 ;
-}});
+    emptyTab = 1 ;
+}
+
+});
 
 
 //Generate a line Graph
@@ -66,9 +119,8 @@ document.getElementById('line').addEventListener('click', function generateLineG
 document.getElementById('BarPerColumn').addEventListener('click', function generateBARGraph() {
     var f1 =  document.getElementById("column3-select").value;
     var unique = matchNameFeatureToArrayFeature(f1).filter( onlyUnique ); 
-    let elmt = unique;
-    elmt.splice(0, 1);
-    elmt.splice(elmt.length -1, 1);
+    var elmt = [].concat(unique);
+    elmt = clean(elmt) ;
     elmt.sort(function(a, b){return a-b});
     var t =[];
     for(var i=0 ; i < elmt.length ; i= i+1){
@@ -133,12 +185,67 @@ function matchNameFeatureToArrayFeature(name){
 function onlyUnique(value, index, self) { 
     return self.indexOf(value) === index;
 }
+//test empty function 
+function empty(data)
+{
+  if(typeof(data) == 'number' || typeof(data) == 'boolean')
+  { 
+    return false; 
+  }
+  if(typeof(data) == 'undefined' || data === null)
+  {
+    return true; 
+  }
+  if(typeof(data.length) != 'undefined')
+  {
+    return data.length == 0;
+  }
+  var count = 0;
+  for(var i in data)
+  {
+    if(data.hasOwnProperty(i))
+    {
+      count ++;
+    }
+  }
+  return count == 0;
+}
+//Remove the undefined rows
+function clean(elmt){
+    //The first line always have the name of the column 
+    elmt.splice(0, 1);
+    for( var i=0; i < elmt.length ; i++){
+        if  ( empty(elmt[i]) || empty(elmt[i].toString() )){
+            elmt.splice( elmt.indexOf(elmt[i]), 1 );
+            i -- ;
+        }
+    }
+    return elmt
+}
+//Remove the undefined rows
+function cleanVersion2(f){
+    //The first line always have the name of the column 
+    for(var j=0 ; j< f.length ;j++){
+        f[j].splice(0, 1);
+    }
+    for(var k=0 ; k < f.length ; k++){
+    for( var i=0; i < f[k].length ; i++){
+        if  ( empty(f[k][i]) || empty(f[k][i].toString() )){
+            for(var j=0 ; j< f.length ;j++){
+                f[j].splice(i,1 );
+            }
+            i -- ;
+        }
+    }}
+    return f
+}
+
+
 
 function details(a){
     var unique = a.filter( onlyUnique ); 
     let elmt = [].concat(unique);
-    elmt.splice(0, 1);
-    elmt.splice(elmt.length -1, 1);
+    elmt = clean(elmt) ;
     var val = false ;
     if (elmt.length > 10){
         val = confirm("This column contains "+elmt.length+" classes. Are you sure you want to explore it ?");
@@ -170,7 +277,22 @@ function details(a){
     addProperties(elmt); }
 }
 
-
+function getMinMaxAVGColumns(){
+    var mins = [] ;
+    var maxs = [] ;
+    var avgs = [] ;
+    for(var i=0; i < features.length ; i++){
+        if (Names.indexOf(features[i][0]) != -1){
+            var unique = features[i].filter( onlyUnique ); 
+            let elmt = [].concat(unique);
+            elmt = clean(elmt);
+            mins.push(Number.parseFloat(Math.min.apply(null, elmt)).toFixed(3));
+            maxs.push(Number.parseFloat(Math.max.apply(null, elmt)).toFixed(3));
+            avgs.push(Number.parseFloat(getMean(elmt)).toFixed(3));
+    }}
+    return  [mins,avgs,maxs] ;
+}
+  
 
 function addProperties(elmt){
     var tableRef = document.getElementById('properties').getElementsByTagName('tbody')[0];
@@ -230,6 +352,46 @@ function drowBarColumn(elmt, t){
         options: options
     }
     var graph3 = new Chart(ctx, config)
+}
+
+function drowMinAVGMax(){
+    var MAM = getMinMaxAVGColumns();
+    var ctx = document.getElementById("MinAvgMaxChart").getContext("2d");
+    var data = {
+        labels: Names,
+        datasets: [
+            {
+                label: "Min",
+                backgroundColor: getRandomColor(),
+                data: MAM[0]
+            },
+            {
+                label: "Average",
+                backgroundColor: getRandomColor(),
+                data: MAM[1]
+            },
+            {
+                label: "Max",
+                backgroundColor: getRandomColor(),
+                data: MAM[2]
+            }
+        ]
+    };
+    var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            barValueSpacing: 20,
+            scales: {
+                yAxes: [{
+                    type: 'logarithmic',
+                    ticks: {
+                        min: 0,
+                    }
+                }]
+            }
+        }
+    });
 }
 
 function drowLine(feature1, feature2){
@@ -324,9 +486,15 @@ function generateFileProperties(){
     const n = features[0].length -1;
     document.getElementById("nbrlignes").innerHTML = "File contiens "+ n +" lignes";
     featuresName = " Columns : "+ features[0][0] ;
+    val = parseFloat(features[0][1]);
+    if(!isNaN(val))
+        Names.push(features[0][0]);
     for(var i =1 ; i< features.length; i= i+1)
         {
             featuresName = featuresName + " , " +features[i][0] ;
+            val = parseFloat(features[i][1]);
+            if(!isNaN(val))
+                Names.push(features[i][0]);
         }
     document.getElementById("columns").innerHTML = featuresName;
 }
@@ -436,8 +604,6 @@ document.getElementById("ScatterMatrix").addEventListener('click',function gener
 //Get the file name
 var f = document.getElementById('fileInput').value;
 var words = f.split('\\');
-console.log(words);
-console.log('file name'+words[words.length -1]);
 Plotly.d3.csv(words[words.length -1], function(err, rows){
 
     function unpack(rows, key) {
@@ -450,15 +616,12 @@ Plotly.d3.csv(words[words.length -1], function(err, rows){
     var unique = features[features.length-1].filter(onlyUnique);
     let elmt = [].concat(unique);
     elmt.splice(0, 1);
-    console.log("unique"+elmt);
     for(var i=0 ; i < elmt.length ; i++){
         comb.push([elmt[i], numb[i]]);
     }
-    console.log(comb);
     for (var i=0; i < unpack(rows,features[features.length -1]).length; i++) {
         for(var j=0 ; j < comb.length ; j++){
       if (unpack(rows, features[features.length -1])[i] == comb[j][0]) {
-        console.log("class "+unpack(rows, 'class')[i]+" matched class"+comb[j][0]+" color "+comb[j][1]);
         colors.push(comb[j][1]);
       }}
     }
@@ -523,3 +686,77 @@ Plotly.d3.csv(words[words.length -1], function(err, rows){
 
 })
 });
+function pearson(elmt1, elmt2) {
+
+   var moy1 = getMean(elmt1);
+   var moy2 = getMean(elmt2);
+   var p = 1 ; var q1 = 1 ; var q2 = 1 ;
+   var max = elmt1.length;
+   for(var i=0 ; i < max ; i++){
+        q1 = q1* Math.pow( elmt1[i] - moy1, 2);
+        q2 = q2* Math.pow( elmt2[i] - moy2, 2);
+    }
+    q1 = Math.sqrt(q1);
+    q2 = Math.sqrt(q2);
+
+   for(var i=0 ; i < max ; i++){
+        p = p *(( elmt1[i] - moy1 ) * ( elmt2[i] - moy2));
+    }
+
+
+    return p / (q1*q2)
+    }
+
+    stdev = function stdev(arr, flag) {
+        return Math.sqrt(variance(arr, flag));
+    }
+
+    mean = function mean(arr) {
+        return sum(arr) / arr.length;
+    };
+
+    sum = function sum(arr) {
+        var sum = 0;
+        var i = arr.length;
+        while (--i >= 0)
+          sum += arr[i];
+        return sum;
+       
+    };
+      
+    covariance = function covariance(arr1, arr2) {
+        var u = mean(arr1);
+        var v = mean(arr2);
+        var arr1Len = arr1.length;
+        var sq_dev = new Array(arr1Len);
+        var i;
+      
+        for (i = 0; i < arr1Len; i++)
+          sq_dev[i] = (arr1[i] - u) * (arr2[i] - v);
+      
+        return sum(sq_dev) / (arr1Len - 1);
+    };
+
+    // (pearson's) population correlation coefficient, rho
+    corrcoeff = function corrcoeff(arr1, arr2) {
+        return covariance(arr1, arr2) /
+            stdev(arr1, 1) /
+            stdev(arr2, 1);
+    };
+
+    variance = function variance(arr, flag) {
+        return sumsqerr(arr) / (arr.length - (flag ? 1 : 0));
+    };
+
+    sumsqerr = function sumsqerr(arr) {
+        var mn = mean(arr);
+        var sum = 0;
+        var i = arr.length;
+        var tmp;
+        while (--i >= 0) {
+          tmp = arr[i] - mn;
+          sum += tmp * tmp;
+        }
+        return sum;
+      };
+      

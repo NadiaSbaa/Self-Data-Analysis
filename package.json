@@ -1,0 +1,32 @@
+{
+  "name": "git",
+  "version": "1.0.0",
+  "description": "auto visualization des données",
+  "main": "index.html",
+  "scripts": {
+    "start": "npm run lite",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lite": "lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NadiaSbaa/Self-Data-Analysis.git"
+  },
+  "keywords": [
+    "auto",
+    "données",
+    "visualiser"
+  ],
+  "author": "Nadia Sbaa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NadiaSbaa/Self-Data-Analysis/issues"
+  },
+  "homepage": "https://github.com/NadiaSbaa/Self-Data-Analysis#readme",
+  "devDependencies": {
+    "lite-server": "^2.5.4"
+  },
+  "dependencies": {
+    "jstat": "^1.9.2"
+  }
+}
