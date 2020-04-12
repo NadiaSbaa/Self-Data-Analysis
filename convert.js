@@ -44,7 +44,7 @@ function corrcoeffBest(){
     var var2 = '';
     for(var i=0; i < features.length ; i++){
         if (Names.indexOf(features[i][0]) != -1){
-            f.push(features[i]);
+            f.push([].concat(features[i]));
         }
     }
     f = cleanVersion2(f);
@@ -64,7 +64,7 @@ function corrcoeffBest(){
     }
     console.log("Final MAx Pearson correlation :" + max);
     console.log("Between "+ var1 + " And "+ var2);
-    console.log(features[i]);
+    console.log(features.length);
 }
 
 //from string to float
