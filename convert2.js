@@ -1,10 +1,11 @@
 console.log("Starting..");
 document.getElementById("diva").hidden = true;
+
 //features is the features of our CSV file
 const features =[];
 var emptyTab = 0;
 const Names = [];
-var words = '';
+
 document.getElementById('fileInput').addEventListener('change', function() {
 if (this.files.length === 0) {
  console.log('No file selected.');
@@ -27,10 +28,7 @@ reader.onload = function fileReadCompleted() {
  //Add the name of the columns to all the selects in the page
  addFeatures(); 
  //Drow the MIN AVG MAX bar graph
-//Get the file name
-var f = document.getElementById('fileInput').value;
-words = f.split('\\');
- drowMinAVGMax();
+ //drowMinAVGMax();
  corrcoeffBest();
 
 };
@@ -52,6 +50,7 @@ function corrcoeffBest(){
         }
     }
     f = cleanVersion2(f);
+    console.log("Pearson correlation ..");
     for(var i=0; i < f.length ; i++){
         
         for(var j=0; j < f.length ; j++){
@@ -69,6 +68,7 @@ function corrcoeffBest(){
         }
     }
     var ch = "Maximum Pearson correlation is " +" between "+ var1 + " And "+ var2 + ":" + max ;
+    console.log(ch);
     document.getElementById("maxPearsonCorr").innerHTML =  ch ;
  
     document.getElementById("labelHelp").innerHTML = "Guidelines to interpreting Pearson's correlation coefficient";
@@ -140,26 +140,6 @@ document.getElementById('line').addEventListener('click', function generateLineG
     drowLine(matchNameFeatureToArrayFeature(f1),matchNameFeatureToArrayFeature(f2));
 });
 
-//Generate a Dot Plot Graph
-document.getElementById('DotPlot').addEventListener('click', function generateLineGraph() {
-var f1 =  document.getElementById("column1-selectDot").value;
-var f2 =  document.getElementById("column2-selectDot").value ;
-var f3 =  document.getElementById("column3-selectDot").value ;
-drowDotPlot(matchNameFeatureToArrayFeature(f1),matchNameFeatureToArrayFeature(f2),matchNameFeatureToArrayFeature(f3));
-});
-
-//Generate a Time series Graph
-document.getElementById('GraphTime').addEventListener('click', function generateGraph() {
-    var f1 =  document.getElementById("column1-selectTime").value;
-    var f2 =  document.getElementById("column2-selectTime").value ;
-    var f3 =  document.getElementById("column3-selectTime").value ;
-    drowTimeSeries(f1,f2,f3);
-});
-//Generate a Time series Graph all
-document.getElementById('GraphTimeAll').addEventListener('click', function generateGraph() {
-    var f1 =  document.getElementById("column1-selectTimeAll").value;
-    drowTimeSeries2(f1);
-});
 //Generate a Bar Graph per column
 document.getElementById('BarPerColumn').addEventListener('click', function generateBARGraph() {
     var f1 =  document.getElementById("column3-select").value;
@@ -400,25 +380,37 @@ function drowBarColumn(elmt, t){
 }
 
 function drowMinAVGMax(){
+    var s = '';
     var MAM = getMinMaxAVGColumns();
-    var ctx = document.getElementById("MinAvgMaxChart").getContext("2d");
+    console.log("Names"+Names);
+    console.log("MAM of 0"+MAM[0]);
+    console.log("MAM of 1"+MAM[1]);
+    console.log("MAM of 2"+MAM[2]);
+    for (var i=0 ; i < MAM[0].length ; i ++){
+    var para = document.createElement("canvas");
+    var node = document.createTextNode("");
+    para.appendChild(node);
+    s = 'graph' + i.toString();
+    para.setAttribute("id",s);
+    var element = document.getElementById("graphs");
+    element.appendChild(para);
+    var ctx = document.getElementById(s).getContext("2d");
     var data = {
-        labels: Names,
+        labels: Names[i],
         datasets: [
-            {
-                label: "Min",
+            {   label: 'Min',
                 backgroundColor: getRandomColor(),
-                data: MAM[0]
+                data: MAM[0][i]
             },
             {
                 label: "Average",
                 backgroundColor: getRandomColor(),
-                data: MAM[1]
+                 data: MAM[1][i]
             },
             {
                 label: "Max",
                 backgroundColor: getRandomColor(),
-                data: MAM[2]
+                data: MAM[2][i]
             }
         ]
     };
@@ -429,15 +421,13 @@ function drowMinAVGMax(){
             barValueSpacing: 20,
             scales: {
                 yAxes: [{
-                    type: 'logarithmic',
                     ticks: {
                         min: 0,
-                        display: false
                     }
                 }]
             }
         }
-    });
+    });}
 }
 
 function drowLine(feature1, feature2){
@@ -651,6 +641,7 @@ document.getElementById("ScatterMatrix").addEventListener('click',function gener
 var f = document.getElementById('fileInput').value;
 var words = f.split('\\');
 Plotly.d3.csv(words[words.length -1], function(err, rows){
+
     function unpack(rows, key) {
         return rows.map(function(row) { return row[key]; });
     }
@@ -664,7 +655,6 @@ Plotly.d3.csv(words[words.length -1], function(err, rows){
     for(var i=0 ; i < elmt.length ; i++){
         comb.push([elmt[i], numb[i]]);
     }
-    /*
     for (var i=0; i < unpack(rows,features[features.length -1]).length; i++) {
         for(var j=0 ; j < comb.length ; j++){
       if (unpack(rows, features[features.length -1])[i] == comb[j][0]) {
@@ -680,7 +670,7 @@ Plotly.d3.csv(words[words.length -1], function(err, rows){
                [0.666, '#636efa'],
                [1, '#636efa']
     ]
-    */
+    
     var axis = () => ({
       showline:false,
       zeroline:false,
@@ -701,8 +691,8 @@ Plotly.d3.csv(words[words.length -1], function(err, rows){
       dimensions: dimensions,
       text: unpack(rows, 'class'),
       marker: {
-       // color: colors,
-		//scolorscale:pl_colorscale,
+        color: colors,
+		colorscale:pl_colorscale,
         size: 7,
         line: {
           color: 'white',
@@ -805,154 +795,4 @@ function pearson(elmt1, elmt2) {
         }
         return sum;
       };
-function drowDotPlot(elmt1, elmt2, elmt3){
-    var f1 =  document.getElementById("column1-selectDot").value;
-    var f2 =  document.getElementById("column2-selectDot").value ;
-    var f3 =  document.getElementById("column3-selectDot").value ;
-var trace1 = {
-  type: 'scatter',
-  x: elmt2,
-  y: elmt1,
-  mode: 'markers',
-  name: 'Percent of '+f2,
-  marker: {
-    color: 'rgba(156, 165, 196, 0.95)',
-    line: {
-      color: 'rgba(156, 165, 196, 1.0)',
-      width: 1,
-    },
-    symbol: 'circle',
-    size: 16
-  }
-};
-
-var trace2 = {
-  x: elmt3,
-  y: elmt1,
-  mode: 'markers',
-  name: 'Percent of '+ f3,
-  marker: {
-    color: 'rgba(204, 204, 204, 0.95)',
-    line: {
-      color: 'rgba(217, 217, 217, 1.0)',
-      width: 1,
-    },
-    symbol: 'circle',
-    size: 16
-  }
-};
-
-var data = [trace1, trace2];
-
-var layout = {
-  title: f1 +' as a function of '+f2 +' and '+f3,
-  xaxis: {
-    showgrid: false,
-    showline: true,
-    linecolor: 'rgb(102, 102, 102)',
-    titlefont: {
-      font: {
-        color: 'rgb(204, 204, 204)'
-      }
-    },
-    tickfont: {
-      font: {
-        color: 'rgb(102, 102, 102)'
-      }
-    },
-    autotick: false,
-    dtick: 10,
-    ticks: 'outside',
-    tickcolor: 'rgb(102, 102, 102)'
-  },
-  margin: {
-    l: 140,
-    r: 40,
-    b: 50,
-    t: 80
-  },
-  legend: {
-    font: {
-      size: 10,
-    },
-    yanchor: 'middle',
-    xanchor: 'right'
-  },
-  width: 600,
-  height: 600,
-  paper_bgcolor: 'rgb(254, 247, 234)',
-  plot_bgcolor: 'rgb(254, 247, 234)',
-  hovermode: 'closest'
-};
-
-Plotly.newPlot('myDiv2', data, layout);
-}
-
-
-function drowTimeSeries(f1,f2,f3){
-    console.log(words[words.length -1]);    
-    Plotly.d3.csv(words[words.length -1], function(err, rows){
-
-        function unpack(rows, key) {
-        return rows.map(function(row) { return row[key]; });
-      }
       
-      
-      var trace1 = {
-        type: "scatter",
-        mode: "lines",
-        name: 'AAPL High',
-        x: unpack(rows, f1),
-        y: unpack(rows, f2),
-        line: {color: '#17BECF'}
-      }
-      
-      var trace2 = {
-        type: "scatter",
-        mode: "lines",
-        name: 'AAPL Low',
-        x: unpack(rows, f1),
-        y: unpack(rows, f3),
-        line: {color: getRandomColor()}
-      }
-      
-      var data = [trace1,trace2];
-      
-      var layout = {
-        title: 'Basic Time Series',
-      };
-      
-      Plotly.newPlot('chart', data, layout);
-      })
-}
-
-
-
-function drowTimeSeries2(f1){
-    console.log(words[words.length -1]);    
-    Plotly.d3.csv(words[words.length -1], function(err, rows){
-
-        function unpack(rows, key) {
-        return rows.map(function(row) { return row[key]; });
-      }
-      var data =[];
-      for(var i=0; i < features.length ; i++){
-        if (Names.indexOf(features[i][0]) != -1 && features[i][0] != f1){
-            var trace = {
-                type: "scatter",
-                mode: "lines",
-                name: features[i][0],
-                x: unpack(rows, f1),
-                y: unpack(rows, features[i][0]),
-                line: {color: getRandomColor()}
-              } 
-       data.push(trace);
-    }}
-
-      var layout = {
-        title: 'Automatic Time Series',
-      };
-      
-      Plotly.newPlot('chartAll', data, layout);
-      })
-}

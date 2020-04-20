@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="style.css" />
     <title>AUTO-ANALYSE</title>
@@ -18,6 +19,7 @@
         <br><br>
         <input type="file" id="fileInput"> 
     </div>
+  
     <div id="diva">
         <div id="FileProperties">
             <h1>File Properties</h1>
@@ -133,6 +135,62 @@
                     <canvas id="graph2"></canvas>
                 </div>
             </div>
+        </div>
+        <div id="GraphDotPlot">
+            <div> 
+                <h1>Dot Plot</h1>
+                <p>A dot plot is a statistical chart consisting of data points plotted on a fairly simple scale, typically using filled in circles.</p>
+                <div>
+                    <br>
+                <label for="column1-selectDot">Choose first feature (on xAxis) </label>
+                    <select id="column1-selectDot">
+                    </select>
+                <label for="column2-selectDot">Choose second feature  (on yAxis) </label>
+                    <select  id="column2-selectDot">
+                    </select>
+                <label for="column3-selectDot">Choose third feature  (on yAxis) </label>
+                    <select  id="column3-selectDot">
+                    </select>
+                </div>
+                <br><br>
+                <input type="button" value="Genrate a Dot Plot graph" id="DotPlot">
+            </div>
+                <div id="myDiv2"></div>
+        </div>
+        <div id="GraphTimeSeries">
+            <div> 
+                <h1>Time Series</h1>
+                <p>A time series graph is a line graph of repeated measurements taken over regular time intervals.</p>
+                <div>
+                    <br>
+                <label for="column1-selectTime">Select the Date column (on xAxis) </label>
+                    <select id="column1-selectTime">
+                    </select>
+                <label for="column2-selectTime">Choose second feature  (on yAxis) </label>
+                    <select  id="column2-selectTime">
+                    </select>
+                <label for="column3-selectTime">Choose third feature  (on yAxis) </label>
+                    <select  id="column3-selectTime">
+                    </select>
+                </div>
+                <br><br>
+                <input type="button" value="Genrate a Time series graph" id="GraphTime">
+            </div>
+            <div class="wrapper">
+                <div id="chart"></div>
+            </div>
+            <h2>Automatic Time Series Graph</h2>
+            <div>
+                <br>
+            <label for="column1-selectTimeAll">Just select the Date column</label>
+                <select id="column1-selectTimeAll">
+                </select>
+            </div>
+            <br><br>
+            <input type="button" value="Genrate all " id="GraphTimeAll">
+        <div class="wrapper">
+            <div id="chartAll"></div>
+        </div>
         </div>
     </div>
     <script src="convert.js"></script>
