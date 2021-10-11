@@ -1,9 +1,14 @@
-It is a plateform for auto analysis of datasets. As an old and not data scientist person , what do I need to see ?
+<h1> Plateform for Auto Analysis of datasets for data scientists </h1>
 
-File properties like : number of columns , rows , columns.
-Min, AVG, Max of every numerical column. (Bar Plot of 3 bars (Min, AVG, Max)). For each column :
-Unique values.
-Bar Graph.
-Other advanced params : SD, Lower Quartile... Correlation between columns : 1- All Correlations : Scatter Matrix 2- Pearson correlations : and you print the maximum correlation. 3- Correlation : between two columns choosen by the person. Notes:
-You have to check if the dataset contains an attribut time and graph the rest in function of it.
-Dot Plot : Between two columns.
+<h2> Mission: </h2>
+This plateform offers data preparation and discovery, interactive dashboards and rich visualisations for any user after uploading his csv file
+
+
+<h2> Interface : </h2>
+<img src="demo_1.PNG" width="350" title="demo_1">
+<img src="demo_2.JPG" width="350" alt="demo_2">
+<img src="demo_3.JPG" width="350" title="demo_3">
+<img src="demo_4.JPG" width="350" alt="demo_4">
+
+<h2> Video Demo link: </h2>
+<p>    <a href="https://drive.google.com/file/d/1cVB9hkxASjSF_3bWxf_S4M8a31LecCr4/view?usp=sharing"> AUTO ANALYSIS DEMO</a> </p>
